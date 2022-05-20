@@ -2,8 +2,6 @@ const hipsterCoffee = require('./hipstercoffee.json');
 const ItemsWriter = require('./itemsWriter');
 const OtherCharges = require('./otherCharges');
 const SubTotal = require('./subTotal');
-const menu = hipsterCoffee[0].prices[0];
-
 
 class Receipt {
   constructor(order) {
