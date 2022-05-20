@@ -43,4 +43,12 @@ describe(Receipt, () => {
     ]))
   })
 
+  it('returns a thank you message at the bottom of the page', () => {
+    expect(receipt.print()).toEqual(expect.arrayContaining([
+      '',
+      '',
+      '                              Thank you!'
+    ]))
+  })
+
 })
