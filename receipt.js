@@ -1,33 +1,34 @@
 const hipsterCoffee = require('./hipstercoffee.json');
 const ItemsWriter = require('./itemsWriter');
-const OtherCharges = require('./otherCharges');
-const SubTotal = require('./subTotal');
 
 class Receipt {
-  constructor(order) {
-    this.order = order;
-    this.returnValue = '';
+  constructor() {
     this.itemsWriter = new ItemsWriter;
-    this.sub = new SubTotal;
-    this.charges = new OtherCharges;
   }
 
-  print() {
-    this.#writeReceipt()
-    return this.returnValue.flat(3);
+  write(order) {
+    this.order = order;
+    if(this.order.receipt === undefined) {this.#mainReceipt()} 
+    if(this.order.cash) {this.#finaliseReceipt()}
+    return this.order.receipt;
   }
 
-  #writeReceipt() {
+  #mainReceipt() {
     this.#receiptHeader();
     this.#customers();
     this.#itemLines();
     this.#taxLine();
     this.#totalLine();
+  }
+
+  #finaliseReceipt() {
+    this.#addMuffinVoucher();
+    this.#paidAndChange();
     this.#thankYou();
   }
 
   #receiptHeader() {
-    this.returnValue = [
+    this.order.receipt = [
       new Date().toLocaleString(), 
       hipsterCoffee[0].shopName,
       '',
@@ -37,41 +38,63 @@ class Receipt {
      ]
   }
 
-  #customers() {
-    let customerLines = [
-                         `Table: ${this.order.table} / [${this.order.noOfCustomers}]`,
-                         this.order.customerNames
-                        ]  
-    this.returnValue.push(customerLines);
+  #customers() { 
+    this.order.receipt.push(`Table: ${this.order.table} / [${this.order.noOfCustomers}]`, 
+                            this.order.customerNames);
   }
 
   #itemLines() {
-    this.returnValue.push([this.itemsWriter.list(this.order), '']);
-  }
-
-  #returnSub() {
-    return this.sub.calculate(this.order.items);
+    let new_receipt = this.order.receipt.concat(this.itemsWriter.list(this.order));
+    this.order.receipt = new_receipt;
   }
 
   #taxLine() {
-    let line = `Tax: ${(this.charges.tax(this.#returnSub())).padStart(35)}`;
-    this.returnValue.push(line);
+    let line = `Tax: ${this.order.otherCharges.taxAmount.padStart(35)}`;
+    this.order.receipt.push(line);
   }
   
-  #totalToString() {
-    return `$${this.#returnSub()}`
+  #totalToDollars() {
+    return `$${this.order.total}`
   }
 
+
   #totalLine() {
-    let line = `Total: ${this.#totalToString().padStart(33)}`;
-    this.returnValue.push(line);
+    let line = `Total: ${this.#totalToDollars().padStart(33)}`;
+    this.order.receipt.push(line);
+  }
+
+  #addMuffinVoucher() {
+    if (this.order.receipt.join().includes('Muffin')) {
+      this.order.receipt.splice(6, 0, this.#muffinVoucherText(), this.#muffinDate())
+    }
+  }
+
+  #muffinVoucherText() {
+    return "Voucher 10% Off All Muffins!"
+  }
+
+  #muffinDate() {
+    this.#tomorrowAndOneMonth();
+    return `Valid ${this.tomorrow.toLocaleDateString()} to ${this.oneMonth.toLocaleDateString()}`
+  }
+
+  #tomorrowAndOneMonth() {
+    let today = new Date();
+    this.tomorrow = new Date(today);
+    this.oneMonth = new Date(today);
+    this.tomorrow.setDate(this.tomorrow.getDate() + 1);
+    this.oneMonth.setDate(this.oneMonth.getDate() + 30);
+  }
+
+  #paidAndChange() {
+    let cash = `Cash: ${this.order.cash.padStart(34)}`;
+    let change = `Change: ${this.order.change.padStart(32)}`;
+    this.order.receipt.push(cash, change);
   }
 
   #thankYou() {
-    this.returnValue.push(['', '', ('Thank you!').padStart(40)])
+    this.order.receipt.push('', '', ('Thank you!').padStart(40))
   }
-
-
 }
 
 module.exports = Receipt;
