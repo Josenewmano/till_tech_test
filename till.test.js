@@ -28,7 +28,7 @@ describe(Till, () => {
   let till = new Till;
   it("returns the total to pay with print()", () => {
     expect(till.print(order)).toEqual(expect.arrayContaining([
-      'Tax:                               $1.72',
+      'Tax                                $1.72',
       'Total:                            $19.95'
       ])
     )
@@ -36,7 +36,7 @@ describe(Till, () => {
 
   it("returns a reduced total to pay with print() and a muffinVoucher", () => {
     expect(till.print(orderForCustomerWithMuffinVoucher, undefined, muffinDiscount)).toEqual(expect.arrayContaining([
-      'Tax:                               $1.69',
+      'Tax                                $1.69',
       'Total:                            $19.55'
       ])
     )

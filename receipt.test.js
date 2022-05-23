@@ -11,26 +11,24 @@ describe(Receipt, () => {
       "Blueberry Muffin": 1, 
       "Choc Mudcake": 1
     },
-    otherCharges: {
+    charges: {
       taxAmount: '$1.72',
     },
-    total: 19.95
+    totalInfo: [{ finalTotal: 19.95 }]
   }
 
-  // let order2 = {
-  //   table: "1",
-  //   noOfCustomers: "1",
-  //   customerNames: "Jane",
-  //   items: {
-  //     "Cafe Latte": 2, 
-  //     "Blueberry Muffin": 1, 
-  //     "Choc Mudcake": 1
-  //   },
-  //   otherCharges: {
-  //     taxAmount: '$1.72',
-  //   },
-  //   total: 19.95
-  // }
+  let orderOver50 = {
+    table: "1",
+    noOfCustomers: "1",
+    customerNames: "Latte Lovin' Jane",
+    items: {
+      "Cafe Latte": 12
+    },
+    charges: {
+      taxAmount: '$4.92',
+    },
+    totalInfo: [{ discountLine: '5% from $57.00', finalTotal: 54.15 }] 
+  }
 
   let completeOrderWithMuffins = {
     table: "1",
@@ -41,10 +39,10 @@ describe(Receipt, () => {
       "Blueberry Muffin": 1, 
       "Choc Mudcake": 1
     },
-    otherCharges: {
+    charges: {
       taxAmount: '$1.72',
     },
-    total: 19.95,
+    totalInfo: [{ finalTotal: 19.95 }],
     cash: '$20.00',
     change: '$0.05',
     receipt: [
@@ -60,7 +58,7 @@ describe(Receipt, () => {
       'Blueberry Muffin               1 x $4.05',
       'Choc Mudcake                   1 x $6.40',
       '',
-      'Tax:                               $1.72',
+      'Tax                                $1.72',
       'Total:                            $19.95'
     ]
   }
@@ -76,7 +74,7 @@ describe(Receipt, () => {
     otherCharges: {
       taxAmount: '$1.36',
     },
-    total: 15.70,
+    totalInfo: [{ finalTotal: 15.70 }],
     cash: '$20.00',
     change: '$4.30',
     receipt: [
@@ -91,7 +89,7 @@ describe(Receipt, () => {
       'Cafe Latte                     2 x $4.75',
       'Choc Mudcake                   1 x $6.40',
       '',
-      'Tax:                               $1.36',
+      'Tax                                $1.36',
       'Total:                            $15.70'
     ]
   }
@@ -123,7 +121,7 @@ describe(Receipt, () => {
       'Blueberry Muffin               1 x $4.05',
       'Choc Mudcake                   1 x $6.40',
       '',
-      'Tax:                               $1.72',
+      'Tax                                $1.72',
       'Total:                            $19.95'
     ]));
   })
@@ -155,6 +153,18 @@ describe(Receipt, () => {
     expect(receipt.write(completeOrderWithoutMuffins)).toEqual(expect.not.arrayContaining([
       "Voucher 10% Off All Muffins!"
     ]))
+  })
+
+  it('returns a discount line and total line with a reduced total for orders over $50', () => {
+    expect(receipt.write(orderOver50)).toEqual(expect.arrayContaining([
+      'Table: 1 / [1]',
+      "Latte Lovin' Jane",
+      'Cafe Latte                    12 x $4.75',
+      '',
+      'Disc                      5% from $57.00',
+      'Tax                                $4.92',
+      'Total:                            $54.15'
+    ]));
   })
 
 })

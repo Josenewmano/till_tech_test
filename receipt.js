@@ -17,6 +17,7 @@ class Receipt {
     this.#receiptHeader();
     this.#customers();
     this.#itemLines();
+    this.#discountLine();
     this.#taxLine();
     this.#totalLine();
   }
@@ -48,13 +49,20 @@ class Receipt {
     this.order.receipt = new_receipt;
   }
 
+  #discountLine() {
+    if(this.order.totalInfo[0].discountLine) {
+    let line = `Disc ${this.order.totalInfo[0].discountLine.padStart(35)}`;
+    this.order.receipt.push(line);
+    }
+  }
+    
   #taxLine() {
-    let line = `Tax: ${this.order.otherCharges.taxAmount.padStart(35)}`;
+    let line = `Tax ${this.order.charges.taxAmount.padStart(36)}`;
     this.order.receipt.push(line);
   }
   
   #totalToDollars() {
-    return `$${this.order.total}`
+    return `$${this.order.totalInfo[0].finalTotal}`
   }
 
 
