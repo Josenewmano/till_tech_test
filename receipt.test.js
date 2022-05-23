@@ -27,7 +27,7 @@ describe(Receipt, () => {
     charges: {
       taxAmount: '$4.92',
     },
-    totalInfo: [{ discountLine: '5% from $57.00', finalTotal: 54.15 }] 
+    totalInfo: [{ discountInfo: '5% from $57.00', finalTotal: 54.15 }] 
   }
 
   let completeOrderWithMuffins = {

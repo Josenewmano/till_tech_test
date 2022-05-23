@@ -50,8 +50,8 @@ class Receipt {
   }
 
   #discountLine() {
-    if(this.order.totalInfo[0].discountLine) {
-    let line = `Disc ${this.order.totalInfo[0].discountLine.padStart(35)}`;
+    if(this.order.totalInfo[0].discountInfo) {
+    let line = `Disc ${this.order.totalInfo[0].discountInfo.padStart(35)}`;
     this.order.receipt.push(line);
     }
   }
@@ -64,7 +64,6 @@ class Receipt {
   #totalToDollars() {
     return `$${this.order.totalInfo[0].finalTotal}`
   }
-
 
   #totalLine() {
     let line = `Total: ${this.#totalToDollars().padStart(33)}`;
@@ -83,15 +82,17 @@ class Receipt {
 
   #muffinDate() {
     this.#tomorrowAndOneMonth();
-    return `Valid ${this.tomorrow.toLocaleDateString()} to ${this.oneMonth.toLocaleDateString()}`
+    return `Valid ${this.tomorrow} to ${this.oneMonth}`
   }
 
   #tomorrowAndOneMonth() {
     let today = new Date();
-    this.tomorrow = new Date(today);
-    this.oneMonth = new Date(today);
-    this.tomorrow.setDate(this.tomorrow.getDate() + 1);
-    this.oneMonth.setDate(this.oneMonth.getDate() + 30);
+    let tomorrow = new Date(today);
+    let oneMonth = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    oneMonth.setDate(oneMonth.getDate() + 30);
+    this.tomorrow = tomorrow.toLocaleDateString();
+    this.oneMonth = oneMonth.toLocaleDateString();
   }
 
   #paidAndChange() {

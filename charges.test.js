@@ -63,6 +63,6 @@ describe(Charges, () => {
   it("applies a discount of 5% for orders over $50", () => {
     let charges = new Charges;
     let items = {"Cafe Latte": 10, "Blueberry Muffin": 10};
-    expect(charges.total(items)).toEqual([{"discountLine": "5% from $88.00", "finalTotal": "83.60"}]);
+    expect(charges.total(items)).toEqual([{"discountInfo": "5% from $88.00", "finalTotal": "83.60"}]);
   })
 })

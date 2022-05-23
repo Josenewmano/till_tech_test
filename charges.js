@@ -29,7 +29,7 @@ class Charges {
 
   #finalTotalInfo() {
     if (this.subTotal > 50) {
-      this.totalInfo = [{ discountLine: `5% from $${this.subTotal.toFixed(2)}`,
+      this.totalInfo = [{ discountInfo: `5% from $${this.subTotal.toFixed(2)}`,
                           finalTotal: (this.subTotal * 0.95).toFixed(2)
                       }]
     } else {
