@@ -2,8 +2,8 @@ const hipsterCoffee = require('./hipstercoffee.json');
 const ItemsWriter = require('./itemsWriter');
 
 class Receipt {
-  constructor() {
-    this.itemsWriter = new ItemsWriter;
+  constructor(itemsWriter = new ItemsWriter) {
+    this.itemsWriter = itemsWriter;
   }
 
   write(order) {
@@ -50,19 +50,19 @@ class Receipt {
   }
 
   #discountLine() {
-    if(this.order.totalInfo[0].discountInfo) {
-    let line = `Disc ${this.order.totalInfo[0].discountInfo.padStart(35)}`;
+    if(this.order.totalInfo.discountInfo) {
+    let line = `Disc ${this.order.totalInfo.discountInfo.padStart(35)}`;
     this.order.receipt.push(line);
     }
   }
     
   #taxLine() {
-    let line = `Tax ${this.order.charges.taxAmount.padStart(36)}`;
+    let line = `Tax ${this.order.totalInfo.taxAmount.padStart(36)}`;
     this.order.receipt.push(line);
   }
   
   #totalToDollars() {
-    return `$${this.order.totalInfo[0].finalTotal}`
+    return `$${this.order.totalInfo.finalTotal}`
   }
 
   #totalLine() {

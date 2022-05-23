@@ -5,24 +5,23 @@ class Till {
   constructor() {
   // this.orders = {};
   this.receiptPrinter = new Receipt;
+  this.charges = new Charges;
   }
 
   print(order, cash = undefined, muffinDiscount = undefined) {
     order.muffinDiscount = muffinDiscount;
-    if(order.charges === undefined) {this.#calculateTaxAndTotal(order)}
+    if(order.totalInfo === undefined) {this.#calculateTotalInfo(order)}
     if(cash) {this.#calculateChange(order, cash)}
     return this.#writeReceipt(order);
   }
 
-  #calculateTaxAndTotal(order) {
-    order.charges = new Charges;
-    order.totalInfo = order.charges.total(order.items, order.muffinDiscount);
-    order.tax = order.charges.tax();
+  #calculateTotalInfo(order) {
+    order.totalInfo = this.charges.total(order.items, order.muffinDiscount);
   }
 
   #calculateChange(order, cash) {
     order.cash = `$${cash.toFixed(2)}`;
-    order.change = order.charges.changeBack(cash, order.total);
+    order.change = this.charges.changeBack(cash, order.totalInfo.finalTotal);
   }
 
   #writeReceipt(order) {

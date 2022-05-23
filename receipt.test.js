@@ -1,8 +1,7 @@
 const Receipt = require('./receipt');
 
 describe(Receipt, () => {
-  let receipt = new Receipt;
-  let order = {
+  let basicOrder = {
     table: "1",
     noOfCustomers: "1",
     customerNames: "Jane",
@@ -11,10 +10,7 @@ describe(Receipt, () => {
       "Blueberry Muffin": 1, 
       "Choc Mudcake": 1
     },
-    charges: {
-      taxAmount: '$1.72',
-    },
-    totalInfo: [{ finalTotal: 19.95 }]
+    totalInfo: { taxAmount: '$1.72', finalTotal: 19.95 }
   }
 
   let orderOver50 = {
@@ -24,10 +20,7 @@ describe(Receipt, () => {
     items: {
       "Cafe Latte": 12
     },
-    charges: {
-      taxAmount: '$4.92',
-    },
-    totalInfo: [{ discountInfo: '5% from $57.00', finalTotal: 54.15 }] 
+    totalInfo: { taxAmount: '$4.92', discountInfo: '5% from $57.00', finalTotal: 54.15 }
   }
 
   let completeOrderWithMuffins = {
@@ -39,10 +32,7 @@ describe(Receipt, () => {
       "Blueberry Muffin": 1, 
       "Choc Mudcake": 1
     },
-    charges: {
-      taxAmount: '$1.72',
-    },
-    totalInfo: [{ finalTotal: 19.95 }],
+    totalInfo: { taxAmount: '$1.72', finalTotal: 19.95 },
     cash: '$20.00',
     change: '$0.05',
     receipt: [
@@ -71,10 +61,7 @@ describe(Receipt, () => {
       "Cafe Latte": 2, 
       "Choc Mudcake": 1
     },
-    otherCharges: {
-      taxAmount: '$1.36',
-    },
-    totalInfo: [{ finalTotal: 15.70 }],
+    totalInfo: { taxAmount: '$1.36', finalTotal: 15.70 },
     cash: '$20.00',
     change: '$4.30',
     receipt: [
@@ -93,9 +80,29 @@ describe(Receipt, () => {
       'Total:                            $15.70'
     ]
   }
+
+  let mockedItemsWriter = {
+    list: (basicOrder) => [
+      'Cafe Latte                     2 x $4.75',
+      'Blueberry Muffin               1 x $4.05',
+      'Choc Mudcake                   1 x $6.40',
+      '',
+    ],
+  };
+
+  let mockedItemsWriterOver50 = {
+    list: (orderOver50) => [
+      'Cafe Latte                    12 x $4.75',
+      '',
+    ],
+  };
+
+  let receipt = new Receipt(mockedItemsWriter);
+  let over50Receipt = new Receipt(mockedItemsWriterOver50);
+
   it('returns the date and cafe details at the top', () => {
     let dateAndTime = new Date().toLocaleString();
-    expect(receipt.write(order)).toEqual(expect.arrayContaining([
+    expect(receipt.write(basicOrder)).toEqual(expect.arrayContaining([
       dateAndTime,
       'The Coffee Connection',
       '',
@@ -106,7 +113,7 @@ describe(Receipt, () => {
   })
 
   it('does not return a thank you message at the bottom of the page if the receipt is not paid', () => {
-    expect(receipt.write(order)).toEqual(expect.not.arrayContaining([
+    expect(receipt.write(basicOrder)).toEqual(expect.not.arrayContaining([
       '',
       '',
       '                              Thank you!'
@@ -114,7 +121,7 @@ describe(Receipt, () => {
   })
   
   it('returns details about the customers, followed by a breakdown of the cost, followed by tax and total cost', () => {
-    expect(receipt.write(order)).toEqual(expect.arrayContaining([
+    expect(receipt.write(basicOrder)).toEqual(expect.arrayContaining([
       'Table: 1 / [1]',
       'Jane',
       'Cafe Latte                     2 x $4.75',
@@ -156,7 +163,7 @@ describe(Receipt, () => {
   })
 
   it('returns a discount line and total line with a reduced total for orders over $50', () => {
-    expect(receipt.write(orderOver50)).toEqual(expect.arrayContaining([
+    expect(over50Receipt.write(orderOver50)).toEqual(expect.arrayContaining([
       'Table: 1 / [1]',
       "Latte Lovin' Jane",
       'Cafe Latte                    12 x $4.75',
