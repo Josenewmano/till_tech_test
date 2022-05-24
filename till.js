@@ -65,7 +65,6 @@ class Till {
     })
   }
 
-
   #calculateTotalInfo(order) {
     order.totalInfo = this.charges.total(order.items, order.muffinDiscount);
   }
