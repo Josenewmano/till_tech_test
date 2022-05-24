@@ -48,7 +48,6 @@ describe(ItemsWriter, () => {
     expect(write.list(order)[1].length).toEqual(40);
     expect(write.list(order)[2].length).toEqual(40);
     expect(write.list(order)[3].length).toEqual(0);
-
   })
 
 })

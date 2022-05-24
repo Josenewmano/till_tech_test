@@ -2,17 +2,55 @@ const Charges = require('./charges');
 const Receipt = require('./receipt');
 
 class Till {
-  constructor(receiptPrinter = new Receipt) {
-  // this.orders = {};
-  this.receiptPrinter = receiptPrinter;
+  constructor(receipt = new Receipt) {
+  this.orders = {};
+  this.receipt = receipt;
   this.charges = new Charges;
+  this.completeOrders = [];
   }
 
-  print(order, cash = undefined, muffinDiscount = undefined) {
+  create(table = "Takeaway", noOfCustomers = undefined, customerNames = undefined, items) {
+    this.orders[table] = {
+      table: table,
+      noOfCustomers: noOfCustomers,
+      customerNames: customerNames,
+      items: items
+    };
+    return this.#createConfirmation(this.orders[table], items)
+  }
+
+  add(table, items) {
+    let order = this.orders[table];
+    return this.#createConfirmation(order, items)
+  }
+
+  print(table, cash = undefined, muffinDiscount = undefined) {
+    let order = this.orders[table];
     order.muffinDiscount = muffinDiscount;
     if(order.totalInfo === undefined) {this.#calculateTotalInfo(order)}
     if(cash) {this.#calculateChange(order, cash)}
     return this.#writeReceipt(order);
+  }
+
+  #createConfirmation(order, items) {
+    return [
+      this.#eatInOrTakeaway(order),
+      order.customerNames,
+      ''
+    ].concat(this.#itemsLister(items))
+  }
+
+  #eatInOrTakeaway(order) {
+    if (order.table === "Takeaway") { return "TAKEAWAY" }
+    return `Table: ${order.table} / [${order.noOfCustomers}]`
+  }
+
+  #itemsLister(items) {
+    let list = [];
+    Object.entries(items).forEach(([key, value]) => {
+      list.push(`${value} x ${key}`.padStart(40))
+    });
+    return list
   }
 
   #calculateTotalInfo(order) {
@@ -20,13 +58,23 @@ class Till {
   }
 
   #calculateChange(order, cash) {
-    order.cash = `$${cash.toFixed(2)}`;
+    order.totalInfo.paidAmount = cash;
+    order.cash = `$${Number(cash).toFixed(2)}`
     order.change = this.charges.changeBack(cash, order.totalInfo.finalTotal);
   }
 
   #writeReceipt(order) {
-    order.receipt = this.receiptPrinter.write(order);
-    return order.receipt;
+    order.receipt = this.receipt.write(order);
+    return this.#receiptFinisher(order);
+  }
+
+  #receiptFinisher(order) {
+    let receipt = order.receipt;
+    if (order.totalInfo.paidAmount >= order.totalInfo.finalTotal) {
+      this.orders[order.table] = undefined;
+      this.completeOrders.push(order);
+    }
+    return receipt;
   }
 }
 
