@@ -21,6 +21,7 @@ class Till {
 
   add(table, items) {
     let order = this.orders[table];
+    this.#addToItemsObject(order, items);
     return this.#createConfirmation(order, items)
   }
 
@@ -52,6 +53,18 @@ class Till {
     });
     return list
   }
+
+  #addToItemsObject(order, newItems) {
+    let newItemKeys = Object.keys(newItems);
+    newItemKeys.forEach((key) => {
+      if (order.items[key]) {
+        order.items[key] += newItems[key]
+      } else {
+        order.items[key] = newItems[key]
+      }
+    })
+  }
+
 
   #calculateTotalInfo(order) {
     order.totalInfo = this.charges.total(order.items, order.muffinDiscount);

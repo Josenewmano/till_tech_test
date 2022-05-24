@@ -1,15 +1,22 @@
 const Till = require('./till');
 
 describe(Till, () => {
-  let orderedItems = {"Cafe Latte": 2, 
-  "Blueberry Muffin": 1, 
-  "Choc Mudcake": 1}
+  let orderedItems = {
+    "Cafe Latte": 2,
+    "Blueberry Muffin": 1, 
+    "Choc Mudcake": 1
+  }
 
-  let orderForOne = {"Cafe Latte": 2, 
-  "Blueberry Muffin": 1, 
-  "Choc Mudcake": 1}
+  let orderForOne = {
+    "Cafe Latte": 1, 
+    "Blueberry Muffin": 1,
+    "Choc Mudcake": 1
+  }
 
-  let anotherRoundOfCoffee = {"Cafe Latte": 2}
+  let cofeesAndCoffeeIceCream = {
+    "Cafe Latte": 2,
+    "Affogato": 1
+  }
 
   let muffinDiscount = true;
 
@@ -107,12 +114,19 @@ describe(Till, () => {
 
   it("adds to an existing order with add()", () => {
     till.create("1", "2", "Jane & Jess", orderedItems);
-    expect(till.add("1", anotherRoundOfCoffee)).toEqual([
+    expect(till.add("1", cofeesAndCoffeeIceCream)).toEqual([
       'Table: 1 / [2]',
       'Jane & Jess',
       '',
       '                          2 x Cafe Latte',
+      '                            1 x Affogato'
     ])
+    expect(till.orders[1].items).toEqual({
+      "Cafe Latte": 4, 
+      "Blueberry Muffin": 1, 
+      "Choc Mudcake": 1,
+      "Affogato": 1,
+    });
   })
 
   it("returns the total to pay with print()", () => {
