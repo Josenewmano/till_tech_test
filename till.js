@@ -2,9 +2,9 @@ const Charges = require('./charges');
 const Receipt = require('./receipt');
 
 class Till {
-  constructor() {
+  constructor(receiptPrinter = new Receipt) {
   // this.orders = {};
-  this.receiptPrinter = new Receipt;
+  this.receiptPrinter = receiptPrinter;
   this.charges = new Charges;
   }
 

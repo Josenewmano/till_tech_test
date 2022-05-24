@@ -90,6 +90,14 @@ describe(Receipt, () => {
     ],
   };
 
+  let mockedItemsWriterNoMuffins = {
+    list: (ompleteOrderWithoutMuffins) => [
+      'Cafe Latte                     2 x $4.75',
+      'Choc Mudcake                   1 x $6.40',
+      '',
+    ],
+  };
+
   let mockedItemsWriterOver50 = {
     list: (orderOver50) => [
       'Cafe Latte                    12 x $4.75',
@@ -98,6 +106,7 @@ describe(Receipt, () => {
   };
 
   let receipt = new Receipt(mockedItemsWriter);
+  let noMuffinReceipt = new Receipt(mockedItemsWriterNoMuffins);
   let over50Receipt = new Receipt(mockedItemsWriterOver50);
 
   it('returns the date and cafe details at the top', () => {
@@ -133,8 +142,6 @@ describe(Receipt, () => {
     ]));
   })
 
-  
-
   it('returns a thank you message at the bottom of the page if the receipt is paid', () => {
     expect(receipt.write(completeOrderWithMuffins)).toEqual(expect.arrayContaining([
       '',
@@ -157,7 +164,7 @@ describe(Receipt, () => {
   })
 
   it('does not return a muffin voucher for next time if the order does not include muffins', () => {
-    expect(receipt.write(completeOrderWithoutMuffins)).toEqual(expect.not.arrayContaining([
+    expect(noMuffinReceipt.write(completeOrderWithoutMuffins)).toEqual(expect.not.arrayContaining([
       "Voucher 10% Off All Muffins!"
     ]))
   })

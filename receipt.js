@@ -8,14 +8,19 @@ class Receipt {
 
   write(order) {
     this.order = order;
-    if(this.order.receipt === undefined) {this.#mainReceipt()} 
+    if(this.order.receipt === undefined) {this.#receiptHeader()} 
+    if(this.order.muffinVoucher === undefined) {this.#mainReceipt()} 
     if(this.order.cash) {this.#finaliseReceipt()}
     return this.order.receipt;
   }
 
+  #receiptHeader() {
+    this.#headerDetails()
+    this.#customers()
+  }
+
   #mainReceipt() {
-    this.#receiptHeader();
-    this.#customers();
+    this.#trimReceiptToHeader();
     this.#itemLines();
     this.#discountLine();
     this.#taxLine();
@@ -28,7 +33,7 @@ class Receipt {
     this.#thankYou();
   }
 
-  #receiptHeader() {
+  #headerDetails() {
     this.order.receipt = [
       new Date().toLocaleString(), 
       hipsterCoffee[0].shopName,
@@ -36,7 +41,7 @@ class Receipt {
       hipsterCoffee[0].address,
       `+${hipsterCoffee[0].phone}`,
       ''
-     ]
+    ]
   }
 
   #customers() { 
@@ -44,6 +49,10 @@ class Receipt {
                             this.order.customerNames);
   }
 
+  #trimReceiptToHeader() {
+    this.order.receipt.length = 8;
+  }
+  
   #itemLines() {
     let new_receipt = this.order.receipt.concat(this.itemsWriter.list(this.order));
     this.order.receipt = new_receipt;
