@@ -10,15 +10,20 @@ Fork this project, then if necessary, either download or install Node.js (guidan
 
 ## Explanation
 The user interacts with the Till class. To load an instance of the Till class:
+
 `node`
+
 `const Till = require('./till')`
+
 `const till = new Till`
 
 To create an order, enter the details of the customers = (table number (if `undefined` defaults to 'takeaway'), optional number of customers, and optional names of customers), then the items the customer would like, along with the quantities of each, as an object. E.g.:
 
 `till.create("1", "1", "Sarah" {"Cafe Latte": 1, "Blueberry Muffin": 1,"Choc Mudcake": 1})`
 
-or (for a takeaway order)
+
+or (for a takeaway order):
+
 
 `till.create(undefined, undefined, "Geoff" {"Double Espresso": 1})`
 
@@ -27,16 +32,22 @@ These orders can also be added to (before they are completed i.e. paid for) by e
 
 `till.add("1", {"Single Espresso": 1})`
 
+
+
 The print method can be called in two different main use cases: 
 - When a cash amount is not included - this would be most suitable for dine in customers
+
 `till.print("1")`
 (which would print the bill to present to table 1)
+
 - When a cash amount is included - this is most suitable for takeaway customers, and for when dine in customers are ready to pay (let's hope they don't run away)
+
 `till.print("2", "40")`
 
-or (for a takeaway order)
+or (for a takeaway order):
 
 `till.print("t", "20")`
+
 
 As receipts are flimsy, and can be easily forgotten/ screwed-up at the bottom of a pocket/ bag, the muffin discount can be applied either when the bill is requested, or when it is paid.
 
@@ -51,7 +62,8 @@ When the print method is called, the Charges class is called to calculate the to
 For information on menu contents and prices, both the Charges and ItemsWriter classes refer to 'prices' section of the hipstercoffee.JSON file or the muffinsdiscountmenu.json for when there is a mufin voucher and the item is a muffin. The Receipt class refers to the hipstercoffee.JSON file for the contact details. In order to use this project in your own restaraunt, simply edit the hipstercoffee.JSON file, or provide one in a similar format - an array consisting of one object (hash), of which the 'prices' key points to an array of one object (hash), of which the item names point to their prices.
 
 ### Schema of the project
-<img width="979" alt="Screenshot 2022-05-24 at 16 03 53" src="https://user-images.githubusercontent.com/98953155/170068628-107fbf9d-0097-48b9-90e6-511a8646acc1.png">
+<img width="707" alt="Screenshot 2022-06-09 at 21 17 22" src="https://user-images.githubusercontent.com/98953155/172936551-edbed103-d84a-4c64-a90f-2a28e4f09588.png">
+
 
 
 ## Assumptions
