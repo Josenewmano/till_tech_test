@@ -9,7 +9,7 @@ class Till {
   this.completeOrders = [];
   }
 
-  create(table = "Takeaway", noOfCustomers = undefined, customerNames = undefined, items) {
+  create(table = "Takeaway", noOfCustomers = "", customerNames = "", items) {
     this.orders[table] = {
       table: table,
       noOfCustomers: noOfCustomers,

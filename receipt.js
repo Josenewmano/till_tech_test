@@ -9,7 +9,7 @@ class Receipt {
   write(order) {
     this.order = order;
     if(this.order.receipt === undefined) {this.#receiptHeader()} 
-    if(this.order.muffinVoucher === undefined) {this.#mainReceipt()} 
+    if(this.#orderHasNotBeenPaid()) {this.#mainReceipt()} 
     if(this.order.cash) {this.#finaliseReceipt()}
     return this.order.receipt;
   }
@@ -17,6 +17,11 @@ class Receipt {
   #receiptHeader() {
     this.#headerDetails()
     this.#customers()
+  }
+
+  #orderHasNotBeenPaid() {
+    if(this.order.cash) {return false}
+    return true
   }
 
   #mainReceipt() {

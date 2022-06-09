@@ -91,7 +91,7 @@ describe(Receipt, () => {
   };
 
   let mockedItemsWriterNoMuffins = {
-    list: (ompleteOrderWithoutMuffins) => [
+    list: (completeOrderWithoutMuffins) => [
       'Cafe Latte                     2 x $4.75',
       'Choc Mudcake                   1 x $6.40',
       '',
@@ -108,6 +108,11 @@ describe(Receipt, () => {
   let receipt = new Receipt(mockedItemsWriter);
   let noMuffinReceipt = new Receipt(mockedItemsWriterNoMuffins);
   let over50Receipt = new Receipt(mockedItemsWriterOver50);
+
+  it('creates a new instance of items writer by default', () => {
+    let unmockedReceipt = new Receipt;
+    expect(unmockedReceipt.itemsWriter).toBeDefined();
+  })
 
   it('returns the date and cafe details at the top', () => {
     let dateAndTime = new Date().toLocaleString();

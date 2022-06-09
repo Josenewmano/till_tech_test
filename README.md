@@ -5,7 +5,7 @@ This is a project, written in JavaScript, which aims to provide a useful interfa
 
 
 ## Getting started
-Fork this project, then if necessary, either download or install Node.js (guidance here if required https://heynode.com/tutorial/install-nodejs-locally-nvm/) then npm (https://docs.npmjs.com/downloading-and-installing-node-js-and-npm). Then run `npm install` to ensure the dependencies match those in the file. Jest is the chosen testing framework. Run tests using `jest`. It is also recommend to add `node_modules` to a `.gitignore` folder within your fork of the project if you intend to host it on Github or a similar website, as there will be a lot of files in there!.
+Fork this project, then if necessary, either download or install Node.js (guidance here if required https://heynode.com/tutorial/install-nodejs-locally-nvm/) then npm (https://docs.npmjs.com/downloading-and-installing-node-js-and-npm). Then run `npm install` to ensure the dependencies match those in the file. Jest is the chosen testing framework. Run tests using `npm test`. It is also recommend to add `node_modules` & `coverage` to a `.gitignore` folder within your fork of the project if you intend to host it on Github or a similar website, as there will be a lot of files in there!
 
 
 ## Explanation

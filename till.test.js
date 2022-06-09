@@ -90,6 +90,14 @@ describe(Till, () => {
 
   let completeTill = new Till(mockedReceiptForCompleteOrder);
 
+  it('has a functioning constructor method', () => {
+    let unmockedTill = new Till;
+    expect(unmockedTill.receipt).toBeDefined();
+    expect(unmockedTill.orders).toBeDefined();
+    expect(unmockedTill.charges).toBeDefined();
+    expect(unmockedTill.completeOrders).toBeDefined();
+  })
+  
   it("creates a new order with create()", () =>  {
     expect(till.create("5", "1","Fred", orderedItems)).toEqual([
       'Table: 5 / [1]',
@@ -101,8 +109,30 @@ describe(Till, () => {
     ])
   })
 
+  it("creates a new order with create() when number of customers is not defined", () =>  {
+    expect(till.create("5", undefined,"Fred", orderedItems)).toEqual([
+      'Table: 5 / []',
+      'Fred',
+      '',
+      '                          2 x Cafe Latte',
+      '                    1 x Blueberry Muffin',
+      '                        1 x Choc Mudcake',
+    ])
+  })
+
+  it("creates a new order with create() when customer names are not defined", () =>  {
+    expect(till.create("5", "2", undefined, orderedItems)).toEqual([
+      'Table: 5 / [2]',
+      '',
+      '',
+      '                          2 x Cafe Latte',
+      '                    1 x Blueberry Muffin',
+      '                        1 x Choc Mudcake',
+    ])
+  })
+
   it("creates a takeaway order with create()", () =>  {
-    expect(till.create("Takeaway", "1", "Fred", orderedItems)).toEqual([
+    expect(till.create(undefined, "1", "Fred", orderedItems)).toEqual([
       'TAKEAWAY',
       'Fred',
       '',
