@@ -10,7 +10,7 @@ class Till {
   this.completeOrders = [];
   }
 
-  create(table = "Takeaway", noOfCustomers = "", customerNames = "", items) {
+  create(table = "t", noOfCustomers = "", customerNames = "", items) {
     if (this.orders[table]) { return "That table is already filled..."}
     this.orders[table] = {
       table: table,
@@ -44,7 +44,7 @@ class Till {
   }
 
   #eatInOrTakeaway(order) {
-    if (order.table === "Takeaway") { return "TAKEAWAY" }
+    if (order.table === "t") { return "TAKEAWAY" }
     return `Table: ${order.table} / [${order.noOfCustomers}]`
   }
 
