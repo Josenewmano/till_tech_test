@@ -1,4 +1,5 @@
 const menu = require('./hipstercoffee.json')[0].prices[0];
+const muffinDiscountMenu = require('./muffindiscountmenu.json')
 
 class ItemsWriter {
   list(order) {
@@ -9,7 +10,7 @@ class ItemsWriter {
     items.forEach((item) =>{
       let amountAndPrice = orderedItems[item] + ' x $' + Number(menu[item]).toFixed(2);
       if (muffinDiscount && item.includes('Muffin')) {
-        amountAndPrice = orderedItems[item] + ' x $' + Number(menu[item] * 0.9).toFixed(2);
+        amountAndPrice = orderedItems[item] + ' x $' + Number(muffinDiscountMenu[item]).toFixed(2);
       }
       output.push(item + (amountAndPrice.padStart(40 - item.length)))
     })

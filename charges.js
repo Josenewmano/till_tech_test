@@ -1,4 +1,5 @@
 const menu = require('./hipstercoffee.json')[0].prices[0];
+const muffinDiscountMenu = require('./muffindiscountmenu.json')
 const USCOFFEESHOPTAXRATE = 0.0864;
 
 class Charges {
@@ -10,7 +11,7 @@ class Charges {
     let subTotal = 0;
     for (let choice in items) {
       if (choice.includes('Muffin') && muffinDiscount) {
-        subTotal += (menu[choice] * 0.9 * items[choice])
+        subTotal += (muffinDiscountMenu[choice] * items[choice])
       } else {
         subTotal += (menu[choice] * items[choice])
       }
