@@ -13,7 +13,7 @@ describe(Till, () => {
     "Choc Mudcake": 1
   }
 
-  let cofeesAndCoffeeIceCream = {
+  let coffeesAndCoffeeIceCream = {
     "Cafe Latte": 2,
     "Affogato": 1
   }
@@ -114,7 +114,7 @@ describe(Till, () => {
 
   it("adds to an existing order with add()", () => {
     till.create("1", "2", "Jane & Jess", orderedItems);
-    expect(till.add("1", cofeesAndCoffeeIceCream)).toEqual([
+    expect(till.add("1", coffeesAndCoffeeIceCream)).toEqual([
       'Table: 1 / [2]',
       'Jane & Jess',
       '',
