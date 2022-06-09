@@ -164,4 +164,14 @@ describe(Till, () => {
     expect(newerTill.orders[2]).toBeUndefined();
     expect(newerTill.completeOrders.length).toEqual(2);
   })
+
+  it("correctly handles multiple calls of print() on the same order", () => {
+    let newestTill = new Till(mockedReceipt, mockedCharges);
+    newestTill.create("1", "1", "New guy", orderForOne);
+    expect(newestTill.print('1')).toEqual('A receipt');
+    expect(newestTill.orders[1].totalInfo).toBeDefined();
+    expect(newestTill.orders[0].cash).toBeUndefined();
+    expect(newestTill.print('1', "50")).toEqual('A receipt');
+    expect(newestTill.completeOrders[0].cash).toBeDefined();
+  })
 })
