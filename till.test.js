@@ -170,7 +170,7 @@ describe(Till, () => {
     newestTill.create("1", "1", "New guy", orderForOne);
     expect(newestTill.print('1')).toEqual('A receipt');
     expect(newestTill.orders[1].totalInfo).toBeDefined();
-    expect(newestTill.orders[0].cash).toBeUndefined();
+    expect(newestTill.orders[1].cash).toBeUndefined();
     expect(newestTill.print('1', "50")).toEqual('A receipt');
     expect(newestTill.completeOrders[0].cash).toBeDefined();
   })
