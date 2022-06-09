@@ -1,15 +1,17 @@
+'use strict';
 const Charges = require('./charges');
 const Receipt = require('./receipt');
 
 class Till {
-  constructor(receipt = new Receipt) {
+  constructor(receipt = new Receipt, charges = new Charges) {
   this.orders = {};
   this.receipt = receipt;
-  this.charges = new Charges;
+  this.charges = charges;
   this.completeOrders = [];
   }
 
   create(table = "Takeaway", noOfCustomers = "", customerNames = "", items) {
+    if (this.orders[table]) { return "That table is already filled..."}
     this.orders[table] = {
       table: table,
       noOfCustomers: noOfCustomers,
@@ -55,6 +57,8 @@ class Till {
   }
 
   #addToItemsObject(order, newItems) {
+    let ordersString = JSON.stringify(this.orders);
+    this.orders = undefined;
     let newItemKeys = Object.keys(newItems);
     newItemKeys.forEach((key) => {
       if (order.items[key]) {
@@ -63,8 +67,9 @@ class Till {
         order.items[key] = newItems[key]
       }
     })
+    this.orders = JSON.parse(ordersString);
+    this.orders[order.table] = order;
   }
-
 
   #calculateTotalInfo(order) {
     order.totalInfo = this.charges.total(order.items, order.muffinDiscount);
@@ -82,12 +87,11 @@ class Till {
   }
 
   #receiptFinisher(order) {
-    let receipt = order.receipt;
     if (order.totalInfo.paidAmount >= order.totalInfo.finalTotal) {
       this.orders[order.table] = undefined;
       this.completeOrders.push(order);
     }
-    return receipt;
+    return order.receipt;
   }
 }
 
