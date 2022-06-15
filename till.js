@@ -22,7 +22,8 @@ class Till {
   }
 
   add(table, items) {
-    let order = Object.assign({copy: true}, this.orders[table], {customerNames:'New Names'});
+    // let order = Object.assign({copy: true}, this.orders[table], {customerNames:'New Names'});
+    let order = {...this.orders[table]}
     console.log(order);
     this.#addToItemsObject(order, items);
     return this.#createConfirmation(order, items)
