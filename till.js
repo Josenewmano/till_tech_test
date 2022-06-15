@@ -22,7 +22,7 @@ class Till {
   }
 
   add(table, items) {
-    let order = this.orders[table];
+    let order = Object.assign({copy: true}, this.orders[table], {customerNames:'New Names'});
     console.log(order);
     this.#addToItemsObject(order, items);
     return this.#createConfirmation(order, items)
@@ -58,6 +58,8 @@ class Till {
   }
 
   #addToItemsObject(order, newItems) {
+    // let ordersString = JSON.stringify(this.orders);
+    // this.orders = undefined;
     let newItemKeys = Object.keys(newItems);
     newItemKeys.forEach((key) => {
       if (order.items[key]) {
@@ -66,6 +68,10 @@ class Till {
         order.items[key] = newItems[key]
       }
     })
+    console.log(order);
+    console.log(this.orders);
+    // this.orders = JSON.parse(ordersString);
+    // this.orders[order.table] = order;
   }
 
   #calculateTotalInfo(order) {
