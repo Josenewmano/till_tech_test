@@ -5,26 +5,7 @@ const basicOrder = { table: '1',
     items: { 'Cafe Latte': 1, 'Choc Mudcake': 1 } 
   };
 const Order = require("./order");
-
-beforeAll(function(done) {
-  mongoose.connect('mongodb://127.0.0.1/till_test', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
-
-  var db = mongoose.connection;
-  db.on("error", console.error.bind(console, "MongoDB connection error:"));
-  db.on("open", function () {
-    done();
-  });
-});
-
-afterAll(function (done) {
-  mongoose.connection.close(true, function () {
-    done();
-  });
-});
-
+require("./mongodb_helper");
 
 describe("Order model", () => {
   beforeEach((done) => {

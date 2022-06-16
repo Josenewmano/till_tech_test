@@ -9,11 +9,8 @@ const OrderSchema = new mongoose.Schema({
   totalInfo: Object,
   cash: String,
   change: String,
-  receipt: [String]
-}
-);
-
-
+  receipt: [String],
+});
 
 const Order = mongoose.model("Order", OrderSchema);
 

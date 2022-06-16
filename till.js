@@ -4,20 +4,20 @@ const Receipt = require('./receipt');
 
 class Till {
   constructor(receipt = new Receipt, charges = new Charges) {
-  this.orders = {};
+  this.orders = [];
   this.receipt = receipt;
   this.charges = charges;
   this.completeOrders = [];
   }
 
   create(table = "t", noOfCustomers = "", customerNames = "", items) {
-    if (this.orders[table]) { return "That table is already filled..."}
-    this.orders[table] = {
+    if (this.#isFilled(table)) { return "That table is already filled..."}
+    this.orders.push({
       table: table,
       noOfCustomers: noOfCustomers,
       customerNames: customerNames,
       items: items
-    };
+    });
     return this.#createConfirmation(this.orders[table], items)
   }
 
@@ -33,6 +33,16 @@ class Till {
     if(order.totalInfo === undefined) {this.#calculateTotalInfo(order)}
     if(cash) {this.#calculateChange(order, cash)}
     return this.#writeReceipt(order);
+  }
+
+  #isFilled(table) {
+    this.orders[table] && this.orders[table].complete === undefined
+
+  }
+
+  #isComplete(order) {
+    if (Object.keys(order).includes("complete")) { return true}
+    return false
   }
 
   #createConfirmation(order, items) {
