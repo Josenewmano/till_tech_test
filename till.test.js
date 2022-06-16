@@ -43,7 +43,7 @@ describe(Till, () => {
   })
   
   it("creates a new order with create()", () =>  {
-    expect(till.orders).toEqual({});
+    expect(till.orders).toEqual([]);
     let order = Object.assign({}, orderedItems);
     expect(till.create("5", "1","Fred", order)).toEqual([
       'Table: 5 / [1]',
@@ -53,7 +53,7 @@ describe(Till, () => {
       '                    1 x Blueberry Muffin',
       '                        1 x Choc Mudcake',
     ])
-    expect(till.orders[5]).toBeDefined();
+    expect(till.orders[0]).toBeDefined();
   })
 
   it("creates a new order with create() when number of customers is not defined", () =>  {
@@ -104,7 +104,8 @@ describe(Till, () => {
 
   it("adds to an existing order with add()", () => {
     let order = Object.assign({}, orderedItems);
-    let coffeeAndCoffee = Object.assign({}, coffeesAndCoffeeIceCream)
+    let coffeeAndCoffee = Object.assign({}, coffeesAndCoffeeIceCream);
+    expect(till.orders.length).toEqual(5);
     till.create("1", "2", "Jane & Jess", order);
     expect(till.add("1", coffeeAndCoffee)).toEqual([
       'Table: 1 / [2]',
@@ -113,7 +114,7 @@ describe(Till, () => {
       '                          2 x Cafe Latte',
       '                            1 x Affogato'
     ])
-    expect(till.orders[1].items).toEqual({
+    expect(till.orders[5].items).toEqual({
       "Cafe Latte": 4, 
       "Blueberry Muffin": 1, 
       "Choc Mudcake": 1,
@@ -123,35 +124,37 @@ describe(Till, () => {
 
   it("correctly handles a order without a muffin voucher with print()", () => {
     let order = Object.assign({}, orderedItems);
+    expect(till.orders.length).toEqual(6);
     till.create("8", "2", "Two gents in the corner", order);
-    expect(till.orders[8].totalInfo).toBeUndefined();
-    expect(till.orders[8].muffinDiscount).toBeUndefined();
+    expect(till.orders[6].totalInfo).toBeUndefined();
+    expect(till.orders[6].muffinDiscount).toBeUndefined();
     expect(till.print('8')).toEqual('A receipt');
-    expect(till.orders[8].totalInfo).toBeDefined();
-    expect(till.orders[8].muffinDiscount).toBeUndefined();
+    expect(till.orders[6].totalInfo).toBeDefined();
+    expect(till.orders[6].muffinDiscount).toBeUndefined();
   })
 
   it("correctly handles an order with a muffin voucher with print()", () => {
     let order = Object.assign({}, orderedItems);
+    expect(till.orders.length).toEqual(7);
     till.create("17", "2", "That lovely young couple", order);
-    expect(till.orders[17].totalInfo).toBeUndefined();
-    expect(till.orders[17].muffinDiscount).toBeUndefined();
+    expect(till.orders[7].totalInfo).toBeUndefined();
+    expect(till.orders[7].muffinDiscount).toBeUndefined();
     expect(till.print('17', undefined, thisIsAMuffinDiscount)).toEqual('A receipt');
-    expect(till.orders[17].muffinDiscount).toBeDefined();
-    expect(till.orders[17].totalInfo).toBeDefined();
+    expect(till.orders[7].muffinDiscount).toBeDefined();
+    expect(till.orders[7].totalInfo).toBeDefined();
   })
 
   it("correctly handles a completed order with print()", () => {
     let newTill = new Till(mockedReceipt, mockedCharges);
     let smallOrder = Object.assign({}, orderForOne);
     newTill.create("22", "1", "That librarian guy", smallOrder);
-    expect(newTill.orders[22]).toBeDefined();
-    expect(newTill.orders[22].totalInfo).toBeUndefined();
-    expect(newTill.orders[22].cash).toBeUndefined();
-    expect(newTill.orders[22].change).toBeUndefined();
+    expect(newTill.orders[0]).toBeDefined();
+    expect(newTill.orders[0].totalInfo).toBeUndefined();
+    expect(newTill.orders[0].cash).toBeUndefined();
+    expect(newTill.orders[0].change).toBeUndefined();
     expect(newTill.completeOrders.length).toEqual(0);
     expect(newTill.print('22', "50")).toEqual('A receipt');
-    expect(newTill.orders[22]).toBeUndefined();
+    expect(newTill.orders.length).toEqual(0);
     expect(newTill.completeOrders.length).toEqual(1);
     expect(newTill.completeOrders[0].totalInfo.paidAmount).toBeDefined();
     expect(newTill.completeOrders[0].cash).toBeDefined();
@@ -164,17 +167,17 @@ describe(Till, () => {
     let order2 = Object.assign({}, orderedItems);
     let smallOrder = Object.assign({}, orderForOne);
     newerTill.create("1", "1", "Someone", order);
-    expect(newerTill.orders[1].items["Blueberry Muffin"]).toEqual(1);
+    expect(newerTill.orders[0].items["Blueberry Muffin"]).toEqual(1);
     newerTill.create("2", "1", "Someone Else", order2);
-    expect(newerTill.orders[2].items["Blueberry Muffin"]).toEqual(1);
-    newerTill.add("2", smallOrder);
     expect(newerTill.orders[1].items["Blueberry Muffin"]).toEqual(1);
-    expect(newerTill.orders[2].items["Blueberry Muffin"]).toEqual(2);
+    newerTill.add("2", smallOrder);
+    expect(newerTill.orders[0].items["Blueberry Muffin"]).toEqual(1);
+    expect(newerTill.orders[1].items["Blueberry Muffin"]).toEqual(2);
     expect(newerTill.print('1', "50")).toEqual('A receipt');
-    expect(newerTill.orders[1]).toBeUndefined();
+    expect(newerTill.orders.length).toEqual(1);
     expect(newerTill.completeOrders.length).toEqual(1);
     expect(newerTill.print('2', "50")).toEqual('A receipt');
-    expect(newerTill.orders[2]).toBeUndefined();
+    expect(newerTill.orders.length).toEqual(0);
     expect(newerTill.completeOrders.length).toEqual(2);
   })
 
@@ -183,8 +186,8 @@ describe(Till, () => {
     let smallOrder = Object.assign({}, orderForOne);
     newestTill.create("1", "1", "New guy", smallOrder);
     expect(newestTill.print('1')).toEqual('A receipt');
-    expect(newestTill.orders[1].totalInfo).toBeDefined();
-    expect(newestTill.orders[1].cash).toBeUndefined();
+    expect(newestTill.orders[0].totalInfo).toBeDefined();
+    expect(newestTill.orders[0].cash).toBeUndefined();
     expect(newestTill.print('1', "50")).toEqual('A receipt');
     expect(newestTill.completeOrders[0].cash).toBeDefined();
   })

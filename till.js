@@ -11,40 +11,35 @@ class Till {
   }
 
   create(table = "t", noOfCustomers = "", customerNames = "", items) {
-    if (this.#isFilled(table)) { return "That table is already filled..."}
-    this.orders.push({
+    if (this.#orderFinder(table) !== undefined) { return "That table is already filled..."}
+    let order = {
       table: table,
       noOfCustomers: noOfCustomers,
       customerNames: customerNames,
       items: items
-    });
-    return this.#createConfirmation(this.orders[table], items)
+    };
+    this.orders.push(order);
+    return this.#createConfirmation(order, items)
   }
 
   add(table, items) {
-    let order = this.orders[table];
+    let order = this.#orderFinder(table);
     this.#addToItemsObject(order, items);
     return this.#createConfirmation(order, items)
   }
 
   print(table, cash = undefined, muffinDiscount = undefined) {
-    let order = this.orders[table];
+    let order = this.#orderFinder(table);
     order.muffinDiscount = muffinDiscount;
     if(order.totalInfo === undefined) {this.#calculateTotalInfo(order)}
     if(cash) {this.#calculateChange(order, cash)}
     return this.#writeReceipt(order);
   }
 
-  #isFilled(table) {
-    this.orders[table] && this.orders[table].complete === undefined
-
+  #orderFinder(table) {
+    return this.orders.find(order => order.table === table);
   }
-
-  #isComplete(order) {
-    if (Object.keys(order).includes("complete")) { return true}
-    return false
-  }
-
+  
   #createConfirmation(order, items) {
     return [
       this.#eatInOrTakeaway(order),
@@ -96,10 +91,16 @@ class Till {
 
   #receiptFinisher(order) {
     if (order.totalInfo.paidAmount >= order.totalInfo.finalTotal) {
-      this.orders[order.table] = undefined;
+      this.#removeFromOrders(order);
       this.completeOrders.push(order);
     }
     return order.receipt;
+  }
+
+  #removeFromOrders(order) {
+    let table = order.table;
+    let index = this.orders.indexOf(this.#orderFinder(table))
+    this.orders.splice(index, 1); 
   }
 }
 
