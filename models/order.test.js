@@ -37,12 +37,27 @@ describe("Order model", () => {
     order.save((err) => {
       expect(err).toBeNull();
 
+      console.log(Order.find())
       Order.find((err, orders) => {
+        console.log(orders)
         expect(err).toBeNull();
 
         expect(orders[0]).toMatchObject(details);
         done();
       });
+    });
+  });
+
+  it("can remove an order", (done) => {
+    let details = Object.assign({}, basicOrder);
+    let table = details.table;
+    let order = new Order(details);
+    order.save();
+    Order.deleteOne({table:table});
+    Order.find((err, orders) => {
+      expect(err).toBeNull();
+      expect(orders).toEqual([]);
+      done();
     });
   });
 });

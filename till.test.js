@@ -48,7 +48,7 @@ describe(Till, () => {
     expect(till.create("5", "1","Fred", order)).toEqual([
       'Table: 5 / [1]',
       'Fred',
-      '',
+      '                                        ',
       '                          2 x Cafe Latte',
       '                    1 x Blueberry Muffin',
       '                        1 x Choc Mudcake',
@@ -61,7 +61,7 @@ describe(Till, () => {
     expect(till.create("6", undefined,"Ed", order)).toEqual([
       'Table: 6 / []',
       'Ed',
-      '',
+      '                                        ',
       '                          2 x Cafe Latte',
       '                    1 x Blueberry Muffin',
       '                        1 x Choc Mudcake',
@@ -73,7 +73,7 @@ describe(Till, () => {
     expect(till.create("7", "2", undefined, order)).toEqual([
       'Table: 7 / [2]',
       '',
-      '',
+      '                                        ',
       '                          2 x Cafe Latte',
       '                    1 x Blueberry Muffin',
       '                        1 x Choc Mudcake',
@@ -82,10 +82,10 @@ describe(Till, () => {
 
   it("creates a takeaway order with create()", () =>  {
     let order = Object.assign({}, orderedItems);
-    expect(till.create(undefined, "1", "Fred", order)).toEqual([
+    expect(till.create("Takeaway", "1", "Fred", order)).toEqual([
       'TAKEAWAY',
       'Fred',
-      '',
+      '                                        ',
       '                          2 x Cafe Latte',
       '                    1 x Blueberry Muffin',
       '                        1 x Choc Mudcake',
@@ -110,7 +110,7 @@ describe(Till, () => {
     expect(till.add("1", coffeeAndCoffee)).toEqual([
       'Table: 1 / [2]',
       'Jane & Jess',
-      '',
+      '                                        ',
       '                          2 x Cafe Latte',
       '                            1 x Affogato'
     ])

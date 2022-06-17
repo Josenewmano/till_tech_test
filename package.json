@@ -1,12 +1,16 @@
 {
   "dependencies": {
+    "bin": "^0.0.0",
+    "inquirer": "^8.2.4",
+    "inquirer-table-prompt": "^0.2.1",
     "jest": "^28.1.0",
     "mongoose": "^6.3.8"
   },
-  "name": "till_tech_test",
+  "name": "go",
   "description": "",
   "version": "1.0.0",
-  "main": "total.js",
+  "bin": "./index.js",
+  "main": "index.js",
   "scripts": {
     "test": "npx jest --coverage "
   },

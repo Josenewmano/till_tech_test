@@ -3,14 +3,14 @@ const Charges = require('./charges');
 const Receipt = require('./receipt');
 
 class Till {
-  constructor(receipt = new Receipt, charges = new Charges) {
-  this.orders = [];
+  constructor(receipt = new Receipt, charges = new Charges, orders = []) {
+  this.orders = orders;
   this.receipt = receipt;
   this.charges = charges;
   this.completeOrders = [];
   }
 
-  create(table = "t", noOfCustomers = "", customerNames = "", items) {
+  create(table, noOfCustomers = "", customerNames = "", items) {
     if (this.#orderFinder(table) !== undefined) { return "That table is already filled..."}
     let order = {
       table: table,
@@ -37,6 +37,7 @@ class Till {
   }
 
   #orderFinder(table) {
+    console.log(this.orders);
     return this.orders.find(order => order.table === table);
   }
   
@@ -44,12 +45,12 @@ class Till {
     return [
       this.#eatInOrTakeaway(order),
       order.customerNames,
-      ''
+      '                                        '
     ].concat(this.#itemsLister(items))
   }
 
   #eatInOrTakeaway(order) {
-    if (order.table === "t") { return "TAKEAWAY" }
+    if (order.table === "Takeaway") { return "TAKEAWAY" }
     return `Table: ${order.table} / [${order.noOfCustomers}]`
   }
 
