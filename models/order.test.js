@@ -37,9 +37,7 @@ describe("Order model", () => {
     order.save((err) => {
       expect(err).toBeNull();
 
-      console.log(Order.find())
       Order.find((err, orders) => {
-        console.log(orders)
         expect(err).toBeNull();
 
         expect(orders[0]).toMatchObject(details);

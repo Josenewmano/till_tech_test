@@ -17,15 +17,15 @@ The user interacts with the Till class. To load an instance of the Till class:
 
 `const till = new Till`
 
-To create an order, enter the details of the customers = (table number (if `undefined` defaults to 'takeaway'), optional number of customers, and optional names of customers), then the items the customer would like, along with the quantities of each, as an object. E.g.:
+To create an order, enter the details of the customers = (table number (if `undefined` defaults to 'Takeaway'), optional number of customers, and optional names of customers), then the items the customer would like, along with the quantities of each, as an object. E.g.:
 
-`till.create("1", "1", "Sarah" {"Cafe Latte": 1, "Blueberry Muffin": 1,"Choc Mudcake": 1})`
+`till.create("1", "1", "Sarah", {"Cafe Latte": 1, "Blueberry Muffin": 1,"Choc Mudcake": 1})`
 
 
 or (for a takeaway order):
 
 
-`till.create(undefined, undefined, "Geoff" {"Double Espresso": 1})`
+`till.create(undefined, undefined, "Geoff", {"Double Espresso": 1})`
 
 
 These orders can also be added to (before they are completed i.e. paid for) by entering the table number, as well as the items and quantitities of each to add. E.g.
@@ -55,7 +55,7 @@ As receipts are flimsy, and can be easily forgotten/ screwed-up at the bottom of
 
 or
 
-`till.print("t", undefined, "20")`
+`till.print("t", "20", true)`
 
 When the print method is called, the Charges class is called to calculate the total and tax amount, and then calculate the amount of change to be returned. All of these values are then passed back to the Till class, before being stored on the order object, and then passed on to the Receipt class. The particularly tricky task for the Receipt class, of working out the formatting and the total for each item (edited in the case of being a muffin and the customer having a muffin voucher), are out-sourced to the ItemsWriter class. The Receipt class then returns the receipt to the Till class, which then passes the receipt along to the user.
 

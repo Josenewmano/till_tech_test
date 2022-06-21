@@ -2,13 +2,17 @@
 
 const inquirer = require('inquirer');
 const inquirerPrompt = require('inquirer-table-prompt');
+const InterruptedPrompt = require("inquirer-interrupted-prompt");
+InterruptedPrompt.replaceAllDefaults(inquirer);
 inquirer.registerPrompt("table", inquirerPrompt);
+inquirer.registerPrompt("table", InterruptedPrompt.from(inquirerPrompt));
+
 
 const mongoose = require("mongoose");
 
 const History = require("./models/history");
 const Order = require("./models/order");
-const Till = require('./till');
+const Till = require('./lib/till');
 
 const allTables = [
   'Takeaway', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10',
@@ -162,10 +166,22 @@ const questions = [
     type: "list",
     message: "Choose an option:",
     choices: [
-      'Create an order', 
-      'Add to an order', 
-      'Print a receipt', 
-      'Take payment for an order', 
+      {
+        name:'Create an order',
+        short: 'Create an order - If you make a mistake, press <Esc> to return to the main menu'
+      },
+      {
+        name:'Add to an order', 
+        short: 'Add to an order - If you make a mistake, press <Esc> to return to the main menu'
+      },
+      {
+        name:'Print a receipt',
+        short: 'Print a receipt - If you make a mistake, press <Esc> to return to the main menu'
+      },
+      {
+        name:'Take payment for an order',
+        short: 'Take payment for an order - If you make a mistake, press <Esc> to return to the main menu'
+      },
       'Close the till'
     ]
   },
@@ -197,12 +213,12 @@ const questions = [
     message: "How many customers are there?",
     when: onCreate
   },
-  {
-    name: "is_there_a_muffin_discount",
-    type: "confirm",
-    message: "Does the customer have a muffin discount voucher?",
-    when: printOrPay
-  },
+  // {
+  //   name: "is_there_a_muffin_discount",
+  //   type: "confirm",
+  //   message: "Does the customer have a muffin discount voucher?",
+  //   when: printOrPay
+  // },
   {
     name: "how_much_cash",
     type: "number",
@@ -211,8 +227,16 @@ const questions = [
   },
 ]
 
-function showMenu() {
-  return inquirer.prompt(questions)
+const muffinQuestion = [
+  {
+    name: "is_there_a_muffin_discount",
+    type: "confirm",
+    message: "Does the customer have a muffin discount voucher?",
+  }
+]
+
+function showMenu(query) {
+  return inquirer.prompt(query)
 }
 
 let finished = false
@@ -221,9 +245,9 @@ const runMenu = async() => {
   await mongoose.connect('mongodb://127.0.0.1/till', { useNewUrlParser: true, useUnifiedTopology: true });
   const orders = await Order.find();
   const till = new Till(undefined, undefined, orders);  
-  console.log(till);
   while(finished !== true) {
-    await showMenu()
+    console.clear();
+    await showMenu(questions)
     .then((answers) => {
       let orderedItems = itemsObjectMaker(answers.what_items)
       if (answers.what_action === 'Create an order') {
@@ -234,12 +258,11 @@ const runMenu = async() => {
         console.log(till.print(answers.what_table, undefined, answers.is_there_a_muffin_discount))
       } else if (answers.what_action === 'Take payment for an order'){
         console.log(till.print(answers.what_table, answers.how_much_cash, answers.is_there_a_muffin_discount))
-      } else {
+      } else if (answers.what_action === 'Close the till'){
         finished = true;
       }
-      console.log(answers)
-      console.log(till.orders)
     })
+    .catch(() => {})
   }
   await mongoose.connection.collections.orders.drop();
   await Order.insertMany(till.orders);
