@@ -4,7 +4,7 @@ const inquirer = require('inquirer');
 const inquirerPrompt = require('inquirer-table-prompt');
 const InterruptedPrompt = require("inquirer-interrupted-prompt");
 InterruptedPrompt.replaceAllDefaults(inquirer);
-inquirer.registerPrompt("table", inquirerPrompt);
+// inquirer.registerPrompt("table", inquirerPrompt);
 inquirer.registerPrompt("table", InterruptedPrompt.from(inquirerPrompt));
 
 
@@ -13,11 +13,28 @@ const mongoose = require("mongoose");
 const History = require("./models/history");
 const Order = require("./models/order");
 const Till = require('./lib/till');
+const till = new Till;
 
 const allTables = [
   'Takeaway', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10',
   '11', '12', '13', '14', '15', '16', '17', '18', '19', '20'                
 ]
+
+let freeTables = [];
+
+let occupiedTables = [];
+
+function updateTables() {
+  occupiedTables.length = 0;
+  freeTables.length = 0;
+  allTables.forEach((table) => {
+    if(till.orders.find(order => order.table === table) !== undefined) {
+      occupiedTables.push(table);
+    } else {
+      freeTables.push(table)
+    }
+  })
+}
 
 const menuColumns = [
   {
@@ -150,15 +167,17 @@ const onCreate = (answers) =>
 const onPay = (answers) => 
   answers.what_action === 'Take payment for an order'
 
-const notClose = (answers) => 
-  answers.what_action === 'Create an order' || 
+const printPayOrAdd = (answers) => 
   answers.what_action === 'Add to an order' || 
   answers.what_action === 'Print a receipt' || 
   answers.what_action === 'Take payment for an order'
 
-const printOrPay = (answers) => 
-  answers.what_action === 'Print a receipt' || 
-  answers.what_action === 'Take payment for an order'
+const printOrPayForMuffin = (answers) => 
+  (answers.what_action === 'Print a receipt' || 
+  answers.what_action === 'Take payment for an order') && 
+  thereIsAnUndiscountedMuffin(answers.what_table)
+
+const cashMessage = (answers) => howMuchCashMessage(answers.what_table)
 
 const questions = [
   {
@@ -189,8 +208,15 @@ const questions = [
     name: "what_table",
     type: "list",
     message: "What table?",
-    choices: allTables,
-    when: notClose
+    choices: freeTables,
+    when: onCreate
+  },
+  {
+    name: "what_table",
+    type: "list",
+    message: "What table?",
+    choices: occupiedTables,
+    when: printPayOrAdd
   },
   {
     type: "table",
@@ -213,30 +239,41 @@ const questions = [
     message: "How many customers are there?",
     when: onCreate
   },
-  // {
-  //   name: "is_there_a_muffin_discount",
-  //   type: "confirm",
-  //   message: "Does the customer have a muffin discount voucher?",
-  //   when: printOrPay
-  // },
-  {
-    name: "how_much_cash",
-    type: "number",
-    message: "How much cash have they paid?",
-    when: onPay
-  },
-]
-
-const muffinQuestion = [
   {
     name: "is_there_a_muffin_discount",
     type: "confirm",
     message: "Does the customer have a muffin discount voucher?",
-  }
+    when: printOrPayForMuffin
+  },
+  {
+    name: "how_much_cash",
+    type: "number",
+    message: cashMessage,
+    when: onPay
+  },
 ]
+
+function thereIsAnUndiscountedMuffin(table) {
+  let order = till.orders.find(item => item.table === table);
+  if (order.muffinDiscount === undefined  &&  Object.keys(order.items).join().includes('Muffin')) { return true }
+  return false
+}
 
 function showMenu(query) {
   return inquirer.prompt(query)
+}
+
+function howMuchCashMessage(table) {
+  till.print(table);
+  let total = till.orders.find(order => order.table === table).totalInfo.finalTotal;
+  return `The customer's final total is $${total}.
+  How much are they paying?`
+}
+
+function returnFormatter(array) {
+  array.unshift('');
+  array.push('');
+  return array.join('\n')
 }
 
 let finished = false
@@ -244,21 +281,21 @@ let finished = false
 const runMenu = async() => {
   await mongoose.connect('mongodb://127.0.0.1/till', { useNewUrlParser: true, useUnifiedTopology: true });
   const orders = await Order.find();
-  const till = new Till(undefined, undefined, orders);  
+  till.orders = orders;
   while(finished !== true) {
-    console.clear();
+    updateTables();
     await showMenu(questions)
     .then((answers) => {
       let orderedItems = itemsObjectMaker(answers.what_items)
       if (answers.what_action === 'Create an order') {
-        console.log(till.create(answers.what_table, answers.how_many_customers, answers.what_names, orderedItems))
+        console.log(returnFormatter(till.create(answers.what_table, answers.how_many_customers, answers.what_names, orderedItems)))
       } else if (answers.what_action === 'Add to an order') {
-        console.log(till.add(answers.what_table, orderedItems))
+        console.log(returnFormatter(till.add(answers.what_table, orderedItems)))
       } else if (answers.what_action === 'Print a receipt'){
-        console.log(till.print(answers.what_table, undefined, answers.is_there_a_muffin_discount))
+        console.log(returnFormatter(till.print(answers.what_table, undefined, answers.is_there_a_muffin_discount)))
       } else if (answers.what_action === 'Take payment for an order'){
-        console.log(till.print(answers.what_table, answers.how_much_cash, answers.is_there_a_muffin_discount))
-      } else if (answers.what_action === 'Close the till'){
+        console.log(returnFormatter(till.print(answers.what_table, answers.how_much_cash, answers.is_there_a_muffin_discount)))
+      } else {
         finished = true;
       }
     })
