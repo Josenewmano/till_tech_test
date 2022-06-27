@@ -62,8 +62,7 @@ When the print method is called, the Charges class is called to calculate the to
 For information on menu contents and prices, both the Charges and ItemsWriter classes refer to 'prices' section of the hipstercoffee.JSON file or the muffinsdiscountmenu.json for when there is a mufin voucher and the item is a muffin. The Receipt class refers to the hipstercoffee.JSON file for the contact details. In order to use this project in your own restaraunt, simply edit the hipstercoffee.JSON file, or provide one in a similar format - an array consisting of one object (hash), of which the 'prices' key points to an array of one object (hash), of which the item names point to their prices.
 
 ### Schema of the project
-<img width="707" alt="Screenshot 2022-06-09 at 21 17 22" src="https://user-images.githubusercontent.com/98953155/172936551-edbed103-d84a-4c64-a90f-2a28e4f09588.png">
-
+<img width="716" alt="Screenshot 2022-06-27 at 20 04 01" src="https://user-images.githubusercontent.com/98953155/176016708-39bd402f-d68a-48eb-b214-05963fc4269e.png">
 
 
 ## Assumptions
